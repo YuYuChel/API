@@ -3,5 +3,5 @@ services:
     name: flask-delete-api
     env: python
     buildCommand: ""
-    startCommand: gunicorn app:app
+    startCommand: gunicorn app:app --timeout 60
     plan: free
