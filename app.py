@@ -4,18 +4,18 @@ import os
 
 app = Flask(__name__)
 
-# Используем PostgreSQL, если доступна, иначе SQLite (для локальной разработки)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-    "DATABASE_URL", "sqlite:///tmp/messages.db"
-)
+# РђР±СЃРѕР»СЋС‚РЅС‹Р№ РїСѓС‚СЊ Рє /tmp (Render СЂР°Р·СЂРµС€Р°РµС‚ С‚СѓРґР° РїРёСЃР°С‚СЊ)
+db_path = os.path.join('/tmp', 'messages.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", f"sqlite:///{db_path}")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(200), nullable=False)
 
-# Инициализация базы данных
+# РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
 with app.app_context():
     db.create_all()
 
@@ -37,6 +37,9 @@ def delete_message():
         return jsonify({"status": "deleted"}), 200
     else:
         return jsonify({"error": "Message not found"}), 404
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
